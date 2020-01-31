@@ -107,9 +107,9 @@ html, body {
     cursor: pointer;
 }
 
-.groups.selected {
+.groups.active {
     margin: 5px 0 5px auto;
-    font-size: calc(14px + 0.5vw);
+    font-size: 140%;
     width: 95%;
     text-align: right;
 }
@@ -195,6 +195,15 @@ html, body {
     height: 100px;
     background-color: var(--dark-bg);
     width: 90%;
+}
+
+.empty {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: var(--middle-bg);
+    width: 100%;
+    height: 80%;
 }
 
 .title {
