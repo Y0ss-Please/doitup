@@ -1,4 +1,5 @@
-import {render} from './modules/DOM_manipulation.js';
+import {renderDOM} from './modules/DOM_manipulation.js';
+import {renderOverlay} from './modules/DOM_manipulation.js';
 
 let taskID = 0;
 let tasks = [];
@@ -20,9 +21,15 @@ const Group = function (title) {
 }
 
 function buildListeners() {
+    document.getElementById('add-entry').addEventListener('click', addEntry);
     Array.from(document.querySelectorAll('.groups')).forEach((e) => {
-        document.addEventListener('click', setActiveGroup);
+        e.addEventListener('click', setActiveGroup);
     });
+}
+
+function addEntry() {
+    renderOverlay();
+    toggleCurtain();
 }
 
 function setActiveGroup(e) {
@@ -30,6 +37,17 @@ function setActiveGroup(e) {
         (group.title == e.target.id)?group.active = true : group.active = false;
     });
     render(tasks,groups);
+}
+
+function toggleCurtain() {
+    const curtain = document.querySelector('.curtain');
+    curtain.classList.toggle('hidden');
+    document.getElementById('overlay-close').addEventListener('click', toggleCurtain);
+}
+
+function render(tasks, groups) {
+    renderDOM(tasks, groups);
+    buildListeners();
 }
 
 function dummyEntries() {
@@ -46,5 +64,4 @@ function dummyEntries() {
 
 dummyEntries();
 render(tasks, groups);
-buildListeners();
 

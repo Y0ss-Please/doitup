@@ -4,7 +4,7 @@
     --light-bg: #6c5966;
 
     --dark-font: ;
-    --light-font: rgb(219, 219, 196)
+    --light-font: rgb(219, 219, 196);
 }
 
 @font-face {
@@ -39,12 +39,24 @@
     font-style: normal;
 }
 
+/* Scroll bar styling */
+body::-webkit-scrollbar { width: 11px; }
+body::-webkit-scrollbar-track { background: var(--light-bg); }
+body::-webkit-scrollbar-thumb {
+background-color: var(--middle-bg) ;
+border-radius: 6px;
+border: 3px solid var(--light-bg);
+}
+
 html, body {
     height: 100%;
     font-family: rubik-regular;
     color: var(--light-font);
     background-color: var(--middle-bg);
     margin: 0;
+
+    scrollbar-width: thin;
+    scrollbar-color: var(--middle-bg) var(--light-bg);
 }
 
 .wrapper {
@@ -86,13 +98,15 @@ html, body {
 
 /* -- LEFT MENU --*/
 .left-menu {
+    display: flex;
+    flex-direction: column;
     flex: 1;
     width: 25vw;
     background-color: var(--middle-bg);
 }
 
 .groups-container {
-    height: 47%;
+    flex: 4;
 }
 
 .groups {
@@ -107,6 +121,11 @@ html, body {
     cursor: pointer;
 }
 
+.groups:hover {
+    background-color: #816c7a;
+    scale: 1.05;
+}
+
 .groups.active {
     margin: 5px 0 5px auto;
     font-size: 140%;
@@ -114,8 +133,13 @@ html, body {
     text-align: right;
 }
 
+.groups.active:hover {
+    background-color: var(--light-bg);
+    scale: 1;
+}
+
 .upcoming-container {
-    height: 47%
+    flex: 2;
 }
 
 .header {
@@ -144,7 +168,6 @@ html, body {
 }
 
 .settings {
-    height: 6%;
     background-color: var(--dark-bg);
 }
 
@@ -163,6 +186,11 @@ html, body {
     font-size: 18px;
     padding: 4px;
     cursor: pointer;
+}
+
+.add-entry:hover {
+    background-color: var(--middle-bg);
+    scale: 1.05;
 }
 
 .checkbox-container {
@@ -215,6 +243,7 @@ html, body {
     color: var(--light-font);
     border: none;
     border-top: 2px dashed var(--light-font);
+    margin: 0;
     width: 100%;
 }
 
@@ -252,7 +281,7 @@ html, body {
 }
 
 .curtain.hidden {
-    top: -100%;
+    top: -200%;
 }
 
 .overlay-container {
@@ -261,11 +290,21 @@ html, body {
     height: 100%;
     background-color: var(--light-font);
     box-shadow: 4px 4px 8px rgba(31, 31, 31, 0.712);
-    overflow-y: auto;
+    overflow: auto;
+}
+
+.overlay-container>hr {
+    margin-bottom: 20px;
+    color: var(--middle-bg);
+    border: none;
+    border-top: 4px dashed var(--middle-bg);
+    border-bottom: 4px dashed var(--middle-bg);
+    width: 100%;
+
 }
 
 .overlay-close {
-    color: var(--dark-bg);
+    color: var(--middle-bg);
     height: 15px;
     width: 15px;
     font-size: 21px;
@@ -273,14 +312,64 @@ html, body {
     font-family: 'rubik-black';
     margin: 10px;
     padding: 5px;
-    border: 4px solid var(--dark-bg);
+    border: 4px solid var(--middle-bg);
     border-radius: 50%;
     text-align: center;
     float:right;
 }
 
 .overlay-close:hover {
-    color: var(--middle-bg);
-    border: 4px solid var(--middle-bg);
+    color: var(--light-bg);
+    border: 4px solid var(--light-bg);
     scale: 1.1;
+}
+
+.overlay-title {
+    font-family: 'rubik-black';
+    font-size: 45px;
+    padding: 4px;
+    margin: 0 15px 0 0;
+    color: var(--middle-bg);
+}
+
+.overlay-form {
+    display: grid;
+    grid-template-columns: 30% 1fr;
+    column-gap: 15px;
+    row-gap: 25px;
+    margin: 15px 15px 30px 0;
+    align-items: center;
+}
+
+.overlay-form>h1 {
+    font-family: 'rubik-black';
+    font-size: 28px;
+    padding: 4px;
+    margin: 0;
+    text-align: right;
+    background-color: var(--middle-bg);
+    color: var(--light-font);
+}   
+
+.overlay-form input,select{
+    height: auto;
+    font-family: 'rubik-light';
+    font-size: 19px;
+    padding: 1px 0 1px 5px;
+    border: 2px solid var(--light-bg);
+    border-radius: 10px;
+    background-color: rgb(241, 241, 233);
+}
+
+.overlay-form input:focus,select:focus {
+    border: 2px solid var(--middle-bg);
+    box-shadow: 0 0 5px rgb(88, 88, 88);
+    transition: 0.5s;
+    background-color: rgb(250, 250, 244);
+}
+
+.reminder-tag {
+    font-size: 25px;
+    font-family: 'rubik-bold';
+    color: var(--middle-bg);
 }
