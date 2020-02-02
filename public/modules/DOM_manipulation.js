@@ -4,13 +4,18 @@ export function renderDOM(tasks, groups) {
     renderGroups(groups);
 }
 
-export function renderOverlay() {
+export function renderOverlay(string) {
+    // Clear the overlay
     const container = document.querySelector('.overlay-container');
     container.innerHTML = `<div id="overlay-close" class="overlay-close">x</div>`;
 
+    if (string == 'newTask') renderNewTaskOverlay(container);
+}
+
+function renderNewTaskOverlay(container) {
     const html = `  <div class="overlay-title">New Task</div>
                     <hr>
-                    <form class="overlay-form">
+                    <form id="new-task" class="overlay-form" action="">
                         <h1>Task Name:</h1><input id="title" type="text">
                         <h1>Description:</h1><input id="description" type="text">
                         <h1>Date:</h1><input id="date" type="date">
@@ -41,15 +46,15 @@ export function renderOverlay() {
                                 </select>
                             </div>
                         <h1>Group:</h1><select id="group">
-                            <option>Work</option>
-                            <option>Play</option>
+                            <option>work</option>
+                            <option>play</option>
                         </select>
                         <h1>Reminder:</h1>
                         <div>
                             <span class="reminder-tag">SMS:</span><input type="checkbox" id="sms">
                             <span class="reminder-tag">E-mail:</span><input type="checkbox" id="email">
                         </div>
-                        <h1>When:</h1><select id="group" id="reminder-time">
+                        <h1>When:</h1><select id="reminder" id="reminder-time">
                             <option>None</option>
                             <option>15 minutes before</option>
                             <option>30 minutes before</option>
@@ -59,20 +64,21 @@ export function renderOverlay() {
                             <option>3 days before</option>
                             <option>1 week before</option>
                         </select>
-                        <h1>Reccuring</h1><select id="group" id="recurring">
+                        <h1>Reccuring</h1><select id="recurring" id="recurring">
                             <option>None</option>
                             <option>Every Day</option>
                             <option>Every Week</option>
                             <option>Every 2 Weeks</option>
                             <option>Every Month</option>
                         </select>
+                        <input id="submit" class="submit" type="button" value="submit">
                     </form>`;
     container.innerHTML = container.innerHTML + html;
 }
 
 function renderTasks(tasks, activeGroup) {
     const container = document.querySelector('.main');
-    container.innerHTML = `<div class="add-entry" id="add-entry">+ New Task</div>`; // Clears the div
+    container.innerHTML = `<div class="add-task" id="add-task">+ New Task</div>`; // Clears the div
     // Filter out tasks that are not assigned to the current group
     let activeTasks = [];
     if (activeGroup) {
@@ -103,17 +109,17 @@ function renderTasks(tasks, activeGroup) {
                             '<div class="day">03</div>' +
                             '<div class="time">12:00</div>' +
                         '</div>';
-            const newEntry = document.createElement('div');
-            newEntry.className = 'entry';
-            newEntry.innerHTML = html;
-            container.appendChild(newEntry);
+            const newTask = document.createElement('div');
+            newTask.className = 'task';
+            newTask.innerHTML = html;
+            container.appendChild(newTask);
         });
     } else {
         const html = 'It\'s totally empty...';
-        const newEntry = document.createElement('div');
-        newEntry.className = 'empty';
-        newEntry.textContent = html;
-        container.appendChild(newEntry);
+        const newTask = document.createElement('div');
+        newTask.className = 'empty';
+        newTask.textContent = html;
+        container.appendChild(newTask);
     }
 }
 
@@ -138,6 +144,8 @@ function renderGroups(groups, activeGroup) {
 
 }
 
+
+/*-- Helper Functions --*/
 function getActiveGroup(groups) {
     let active = ''
     groups.forEach((e) => {

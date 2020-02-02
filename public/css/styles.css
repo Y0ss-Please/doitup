@@ -178,7 +178,7 @@ html, body {
     background-color: var(--light-bg);
 }
 
-.add-entry {
+.add-task {
     text-align: center;
     margin: 10px auto;
     width: 100px;
@@ -188,7 +188,7 @@ html, body {
     cursor: pointer;
 }
 
-.add-entry:hover {
+.add-task:hover {
     background-color: var(--middle-bg);
     scale: 1.05;
 }
@@ -215,7 +215,7 @@ html, body {
     color: var(--dark-bg);
 }
 
-.entry {
+.task {
     display: grid;
     grid-template-columns: 7% 1fr 10%;
     grid-template-rows: 30% 1fr;
