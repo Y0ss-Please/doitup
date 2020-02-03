@@ -94,6 +94,8 @@ function renderTasks(tasks, activeGroup) {
         activeTasks = tasks;
     }
 
+    activeTasks = activeTasks.sort((a, b) => (a.dateTime>b.dateTime)? 1 : -1); // Sort tasks by date
+
     if (activeTasks.length != 0) {
         activeTasks.forEach((e) => {
             const html =`<div class="checkbox-container"> 

@@ -115,8 +115,8 @@ html, body {
     width: 80%;
     font-family: 'rubik-bold';
     font-size: calc(12px + 0.5vw);
+    color: #2b1f27;
     background-color: var(--light-bg);
-    color: rgb(34, 34, 33);
     text-align: center;
     cursor: pointer;
     border-radius: 3px;
