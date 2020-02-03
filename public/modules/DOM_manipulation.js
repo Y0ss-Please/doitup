@@ -1,3 +1,5 @@
+import { getDayFromTime, getMonthFromTime, getDateFromTime, getTimeFromTime, dateTimeToString } from './time_control.js';
+
 export function renderDOM(tasks, groups) {
     const activeGroup = getActiveGroup(groups);
     renderTasks(tasks, activeGroup);
@@ -94,21 +96,23 @@ function renderTasks(tasks, activeGroup) {
 
     if (activeTasks.length != 0) {
         activeTasks.forEach((e) => {
-            const html ='<div class="checkbox-container">' +
-                            '<div class="checkbox">X</div>' +
-                        '</div>' +
-                        `<div class="title">${e.title}` +
-                            '<span class="tag"></span>' +
-                            '<hr>' +
-                        '</div>' +                        
-                        '<div class="description">' +
-                            `<p>${e.description}</p>` +
-                        '</div>' +
-                        '<div class="due-date">' +
-                            '<div class="month">Feb</div>' +
-                            '<div class="day">03</div>' +
-                            '<div class="time">12:00</div>' +
-                        '</div>';
+            const html =`<div class="checkbox-container"> 
+                            <div class="checkbox">X</div> 
+                        </div> 
+                        <div class="title">${e.title} 
+                            <span class="tag"></span> 
+                            <hr> 
+                        </div>                         
+                        <div class="description"> 
+                            <p>${e.description}</p> 
+                        </div> 
+                        <div class="due-date"> 
+                            <div class="month">${getMonthFromTime(dateTimeToString(e.dateTime))}</div> 
+                            <div class="date">${getDateFromTime(dateTimeToString(e.dateTime))}</div> 
+                            <div class="time">${getTimeFromTime(dateTimeToString(e.dateTime))}</div>
+                            <hr>
+                            <div class="day">${getDayFromTime(dateTimeToString(e.dateTime))}</div>
+                        </div>`;
             const newTask = document.createElement('div');
             newTask.className = 'task';
             newTask.innerHTML = html;

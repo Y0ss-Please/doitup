@@ -1,5 +1,5 @@
-import {renderDOM} from './modules/DOM_manipulation.js';
-import {renderOverlay} from './modules/DOM_manipulation.js';
+import {renderDOM, renderOverlay} from './modules/DOM_manipulation.js';
+import {userDateToEpoch} from './modules/time_control.js';
 
 let taskID = 0;
 let tasks = [];
@@ -50,9 +50,7 @@ function prepareNewTask() {
     const [title, description, date, hour, minute, ampm, group, sms, email, reminder, recurring] 
     = [form[0].value, form[1].value, form[2].value, form[3].value, form[4].value,
     form[5].value, form[6].value, form[7].value, form[8].value, form[9].value, form[10].value];
-
-    const dateTime = Date.now(); // TODO: set sateTime to the entered value!
-
+    const dateTime = userDateToEpoch(date,hour,minute,ampm); // TODO: set sateTime to the entered value!
     createNewTask(title, description, dateTime, group, sms, email, reminder, recurring);
 }
 
@@ -91,6 +89,7 @@ function dummyEntries() {
     createNewTask('Make Do-It-Up', 'Lorem Impsum Set Dola', Date.now(), 'work', 'true', 'true', '1 hour before', 'every week');
     createNewTask('Eat Food', 'Chomp, gobble, slurp', Date.now(), 'work', 'false', 'false', 'false', 'false');
     createNewTask('Jubilate', 'HEYYYYY-EEEE-YAAAAY-EEE-YEAAAAAA-YEAH', Date.now(), 'play', 'false', 'true', '1 day bofore', 'every month');
+    createNewTask('Birf-deah', 'Time on the right should be 12:30pm Friday March 6 2020', 1583523000000, 'play', 'false', 'true', '1 day bofore', 'every month');
     const newGroup = new Group('work');
     // newGroup.active = true;
     const newerGroup = new Group('play');
@@ -101,31 +100,4 @@ function dummyEntries() {
 /* -- Initial Function Call --*/
 dummyEntries();
 render(tasks, groups);
-
-
-/* -- TODO --*/
-
-/*  
-Timey Wimey crap. Tasks need to store dates as Epoch time, but DOM needs to display 
-dates and times relative to the current users timezone. One day when I get around to making
-cron jobs this should make life a lot easier.
-
-Also there should be an array of tasks that need to be remindered. Cron job will check for 
-tasks with a matching time, send reminder and remove it from the list. Back end stuff, will
-probably do way later, but it needs doing some time...
-*/
-
-// Messing with the fabric of space-time //
-const someDate = new Date();
-console.log('user date: '+someDate);
-console.log('GMT date: '+someDate.toGMTString());
-console.log('Epoch date: '+someDate.getTime());
-
-
-const userDate = new Date();
-const userUTCOffset = userDate.getTimezoneOffset();
-
-
-
-console.log(userUTCOffset);
 console.table(tasks);

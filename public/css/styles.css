@@ -4,7 +4,7 @@
     --light-bg: #6c5966;
 
     --dark-font: ;
-    --light-font: rgb(219, 219, 196);
+    --light-brown: rgb(211, 211, 187);
 }
 
 @font-face {
@@ -51,7 +51,7 @@ border: 3px solid var(--light-bg);
 html, body {
     height: 100%;
     font-family: rubik-regular;
-    color: var(--light-font);
+    color: var(--light-brown);
     background-color: var(--middle-bg);
     margin: 0;
 
@@ -73,7 +73,7 @@ html, body {
     display: inline-block;
     margin-top: 5px;
     font-size: calc(25px + 3vw);
-    color: var(--light-font);
+    color: var(--light-brown);
     font-family: 'rubik-black';
 }
 
@@ -93,7 +93,7 @@ html, body {
 .flex-container {
     display: flex;
     /* min-height: 100% - top-bar height */
-    min-height: calc(100% - (35px + 3vw));
+    height: calc(100% - (35px + 3vw));
 }
 
 /* -- LEFT MENU --*/
@@ -119,6 +119,7 @@ html, body {
     color: rgb(34, 34, 33);
     text-align: center;
     cursor: pointer;
+    border-radius: 3px;
 }
 
 .groups:hover {
@@ -157,7 +158,7 @@ html, body {
     font-family: 'rubik-black';
     font-size: 28px;
     line-height: 16px;
-    border: 2px solid var(--light-font);
+    border: 2px solid var(--light-brown);
     float: left;
     cursor: pointer;
 }
@@ -186,6 +187,7 @@ html, body {
     font-size: 18px;
     padding: 4px;
     cursor: pointer;
+    border-radius: 3px;
 }
 
 .add-task:hover {
@@ -204,7 +206,7 @@ html, body {
 .checkbox {
     height: 28px;
     width: 28px;
-    background-color: var(--light-font);
+    background-color: var(--light-brown);
     text-align: center;
     font-size: 30px;
     color: rgba(73, 73, 73, 0.301);
@@ -217,12 +219,15 @@ html, body {
 
 .task {
     display: grid;
-    grid-template-columns: 7% 1fr 10%;
+    grid-template-columns: 7% 10% 1fr;
     grid-template-rows: 30% 1fr;
     margin: 10px auto;
     height: 100px;
-    background-color: var(--dark-bg);
+    background-color: var(--light-brown);
+    color: var(--middle-bg);
     width: 90%;
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.418);
+    border-radius: 3px;
 }
 
 .empty {
@@ -237,20 +242,20 @@ html, body {
 .title {
     font-family: 'rubik-bold';
     margin-top: 5px;
+    font-size: 24px;
+    margin-left: 10px;
 }
 
 .title>hr {
-    color: var(--light-font);
     border: none;
-    border-top: 2px dashed var(--light-font);
-    margin: 0;
+    border-top: 2px dashed var(--middle-bg);
+    margin:0;
     width: 100%;
 }
 
 .description {
     font-family: 'rubik-light';
-    margin-top: 10px;
-    margin-bottom: 10px;
+    margin: 10px 0 10px 10px;
     overflow: hidden;
 }
 
@@ -259,13 +264,23 @@ html, body {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    grid-column: 3;
+    grid-column: 2;
     grid-row: 1 / span end;
+    background-color: var(--middle-bg);
+    color: var(--light-brown);
+}
+
+.due-date>hr {
+    margin: 4px 0 4px 0;
+    border: none;
+    border-top: 2px dashed var(--light-brown);
+    width: 50%;
 }
 
 .month { font-size: 15px; }
-.day { font-size: 24px; }
+.date { font-size: 24px; }
 .time { font-size: 15px; }
+.day { font-size: 14px; }
 
 /* Overlay Styles */
 
@@ -288,7 +303,7 @@ html, body {
     margin: 0 auto;
     width: 50%;
     height: 100%;
-    background-color: var(--light-font);
+    background-color: var(--light-brown);
     box-shadow: 4px 4px 8px rgba(31, 31, 31, 0.712);
     overflow: auto;
 }
@@ -348,7 +363,7 @@ html, body {
     margin: 0;
     text-align: right;
     background-color: var(--middle-bg);
-    color: var(--light-font);
+    color: var(--light-brown);
 }   
 
 .overlay-form input,select{
