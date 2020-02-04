@@ -31,6 +31,13 @@ function buildListeners() {
     Array.from(document.querySelectorAll('.remove-task')).forEach((e) => {
         e.addEventListener('click', removeTask);
     });
+    Array.from(document.querySelectorAll('.checkbox')).forEach((e) => {
+        e.addEventListener('click', toggleChecked);
+    });
+    Array.from(document.querySelectorAll('.remove-groups')).forEach((e) => {
+        e.addEventListener('click', removeGroups);
+    });
+    document.querySelector('.add-group').addEventListener('click', groupBtn);
 }
 
 
@@ -45,31 +52,36 @@ function submitNewTask() {
     prepareNewTask();
     toggleCurtain();
     render();
-    console.table(tasks);
 }
 
 function prepareNewTask() {
     const form = document.getElementById('new-task');
-    const [title, description, date, hour, minute, ampm, group] 
+    const [title, description, group, date, hour, minute, ampm] 
     = [form[0].value, form[1].value, form[2].value, form[3].value, form[4].value,
     form[5].value, form[6].value];
     const dateTime = userDateToEpoch(date,hour,minute,ampm); // TODO: set sateTime to the entered value!
     createNewTask(title, description, dateTime, group);
 }
 
-function createNewTask(title, description, date, hour, minute, ampm, group, sms, email, reminder, recurring) {
-    const newTask = new Task (title, description, date, hour, minute, ampm, group, sms, email, reminder, recurring);
-    tasks.push(newTask);
+function createNewTask(title, description, date, hour, minute, ampm, group) {
+    const newTask = new Task (title, description, date, hour, minute, ampm, group);
+    tasks.push(newTask);    
 }
 
 function removeTask(e) {
-    tasks.forEach(obj => {
-        if (obj.id == e.target.id){
-            console.log(this);
-            tasks.splice(tasks.indexOf(obj.id),1);
-            console.table(tasks);
+    if (!e.target) return;
+    tasks = tasks.filter((el) => {return e.target.id != el.id;} );
+    render();
+}
+
+function toggleChecked(e){
+    let checked = ''
+    tasks.findIndex((element, index) => {
+        if (element.id == e.target.id) {
+            checked = index;
         }
     });
+    tasks[checked].checked = !tasks[checked].checked;
     render();
 }
 
@@ -82,6 +94,30 @@ function setActiveGroup(e) {
     render();
 }
 
+function groupBtn() {
+    renderOverlay('newGroup',groups);
+    document.getElementById('submit').addEventListener('click', submitNewGroup);
+    toggleCurtain();
+}
+
+function submitNewGroup() {
+    createNewGroup();
+    toggleCurtain();
+    render();
+}
+
+function createNewGroup() {
+    const newGroup = new Group (document.getElementById('new-group')[0].value);
+    groups.push(newGroup);
+}
+
+function removeGroups(e) {
+    if (confirm(`This will delete the group "${e.target.id}" and all the tasks it contains. This cannot be undone. Are you sure?`)) {
+        tasks = tasks.filter((el) => {return e.target.id != el.group;});
+        groups = groups.filter(ele => {return e.target.id != ele.title});
+        render();
+    }
+}
 
 /* -- Overlay Functions --*/
 function toggleCurtain() {
@@ -93,24 +129,34 @@ function toggleCurtain() {
 
 /* -- Render --*/
 function render() {
+    setLocalStorage()
     renderDOM(tasks, groups);
     buildListeners();
 }
 
+/* -- Local Storage -- */
 
-/* -- Dummy Entries, delet someday --*/
-function dummyEntries() {
-    createNewTask('Make Do-It-Up', 'Lorem Impsum Set Dola', Date.now(), 'work');
-    createNewTask('Eat Food', 'Chomp, gobble, slurp', Date.now(), 'work');
-    createNewTask('Jubilate', 'HEYYYYY-EEEE-YAAAAY-EEE-YEAAAAAA-YEAH', Date.now(), 'play');
-    createNewTask('Birf-deah', 'Time on the right should be 12:30pm Friday March 6 2020', 1583523000000, 'play');
-    const newGroup = new Group('work');
-    // newGroup.active = true;
-    const newerGroup = new Group('play');
-    const newestGroup = new Group('project');
-    groups.push(newGroup,newerGroup,newestGroup);
+function getLocalStorage() {
+    try {
+        tasks = JSON.parse(window.localStorage.getItem('storedTasks'));
+        groups = JSON.parse(window.localStorage.getItem('storedGroups'));
+    } catch {
+        window.localStorage.setItem('storedTasks', JSON.stringify(tasks));
+        window.localStorage.setItem('storedGroups', JSON.stringify(groups));
+    }
+    if (tasks == null) { tasks = [] };
+    if (groups == null) { groups = [] };
 }
 
-/* -- Initial Function Call --*/
-dummyEntries();
-render(tasks, groups);
+function setLocalStorage() {
+    window.localStorage.setItem('storedTasks', JSON.stringify(tasks));
+    window.localStorage.setItem('storedGroups', JSON.stringify(groups));
+}
+
+/* -- Initial render() Call --*/
+if (typeof(Storage) !== "undefined") {
+    getLocalStorage();
+    } else {
+    alert('Your browser does not support local storage. Anything you do here will be lost once you leave this page.');
+}
+render();

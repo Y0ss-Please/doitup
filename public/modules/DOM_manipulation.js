@@ -11,7 +11,8 @@ export function renderOverlay(type,groups) {
     const container = document.querySelector('.overlay-container');
     container.innerHTML = `<div id="overlay-close" class="overlay-close">x</div>`;
 
-    if (type == 'newTask') renderNewTaskOverlay(container,groups);
+    if (type == 'newTask') renderNewTaskOverlay(container, groups);
+    if (type == 'newGroup') renderNewGroupOverlay(container, groups);
 }
 
 function renderNewTaskOverlay(container,groups) {
@@ -21,7 +22,7 @@ function renderNewTaskOverlay(container,groups) {
                         <h1>Task Name:</h1><input id="title" type="text">
                         <h1>Description:</h1><input id="description" type="text">
                         <h1>Group:</h1><select id="group"></select>
-                        <h1>Date:</h1><input id="date" type="date" value="${setDatePickerDefault()}">
+                        <h1>Date:</h1><input id="date" type="date">
                         <h1>Time:</h1>
                             <div>
                                 <select id="hour">
@@ -64,6 +65,16 @@ function renderNewTaskOverlay(container,groups) {
     groupContainer.innerHTML = groupsOptions;
 }
 
+function renderNewGroupOverlay(container, groups) {
+    const html = `  <div class="overlay-title">New Group</div>
+                    <hr>
+                    <form id="new-group" class="overlay-form" action="">
+                        <h1>Group Name:</h1><input id="title" type="text">
+                        <input id="submit" class="submit" type="button" value="submit">
+                    </form>`;
+    container.innerHTML = container.innerHTML + html;
+}
+
 function renderTasks(tasks, activeGroup) {
     const container = document.querySelector('.main');
     container.innerHTML = `<div class="add-task" id="add-task">+ New Task</div>`; // Clears the div
@@ -80,12 +91,13 @@ function renderTasks(tasks, activeGroup) {
         activeTasks = tasks;
     }
 
-    activeTasks = activeTasks.sort((a, b) => (a.dateTime>b.dateTime)? 1 : -1); // Sort tasks by date
+    activeTasks = activeTasks.sort((a, b) => (a.dateTime>b.dateTime || isNaN(b.dateTime))? 1 : -1); // Sort tasks by date
+    activeTasks = activeTasks.sort((a, b) => (a.checked)? 1 : -1); // Sort tasks by checked
 
     if (activeTasks.length != 0) {
         activeTasks.forEach((e) => {
             const html =`<div class="checkbox-container"> 
-                            <div class="checkbox">X</div> 
+                            <div class="checkbox" id="${e.id}">X</div> 
                         </div> 
                         <div class="title">${e.title} 
                             <span class="remove-task" id="${e.id}">&#128465;</span> 
@@ -98,7 +110,10 @@ function renderTasks(tasks, activeGroup) {
                             ${setDueDate(e.dateTime)}
                         </div>`;
             const newTask = document.createElement('div');
-            newTask.className = 'task';
+            newTask.className = (e.checked)?'task checked':'task';
+            if (e.dateTime <= new Date() && !e.checked){
+                newTask.classList.add('overdue');
+            }
             newTask.innerHTML = html;
             container.appendChild(newTask);
         });
@@ -144,21 +159,43 @@ function renderGroups(groups, activeGroup) {
             newGroup.classList.add('active')
             newGroup.textContent = newGroup.textContent + ' ⯈';
         }
+        const removeGroup = document.createElement('div');
+        removeGroup.className = 'remove-groups';
+        removeGroup.setAttribute('id', e.title);
+        removeGroup.innerHTML = '&#128465;';
+        newGroup.appendChild(removeGroup);
         container.appendChild(newGroup);
     });
-
+    container.innerHTML = container.innerHTML + `<div class="groups all">All</div>`;
 }
 
 
 /*-- Helper Functions --*/
 function setUpcoming(tasks) {
-    const upcomingTasks = tasks.sort((a, b) => (a.dateTime>b.dateTime)? 1 : -1); // Sort tasks by date
-    document.getElementById('upcoming').innerHTML = upcomingTasks[0].title+'<hr>'+
-        getDayFromTime(dateTimeToString(upcomingTasks[0].dateTime))+' '+
-        '<br>'+
-        getMonthFromTime(dateTimeToString(upcomingTasks[0].dateTime))+' '+
-        getDateFromTime(dateTimeToString(upcomingTasks[0].dateTime))+' '+
-        getTimeFromTime(dateTimeToString(upcomingTasks[0].dateTime));
+    const container = document.getElementById('upcoming');
+    const now = new Date();
+    let upcomingTasks = tasks.sort((a, b) => (a.dateTime>b.dateTime || isNaN(a.dateTime))? 1 : -1); // Sort tasks by date
+    if (upcomingTasks != '') upcomingTasks = upcomingTasks.filter(e => { return e.checked == false });    
+    try{
+        container.innerHTML = upcomingTasks[0].title+'<hr>';
+        if (isNaN(upcomingTasks[0].dateTime)){
+            container.innerHTML = container.innerHTML + 'No Time Set'
+        } else {
+            container.innerHTML = container.innerHTML + getDayFromTime(dateTimeToString(upcomingTasks[0].dateTime))+' '+
+            '<br>'+
+            getMonthFromTime(dateTimeToString(upcomingTasks[0].dateTime))+' '+
+            getDateFromTime(dateTimeToString(upcomingTasks[0].dateTime))+' '+
+            getTimeFromTime(dateTimeToString(upcomingTasks[0].dateTime));
+        }
+        if (upcomingTasks[0].dateTime < now){
+            container.classList.add('overdue');
+        } else {
+            container.classList.remove('overdue');
+        }
+    } catch {
+        container.innerHTML = 'No tasks...';
+        container.classList.remove('overdue');
+    }
 }
 
 function getActiveGroup(groups) {
@@ -182,6 +219,5 @@ function setDatePickerDefault() {
     let date = currentDate.getDate().toString();
     if (month[1] == null) month = '0' + month;
     if (date[1] == null) date = '0' + date;
-    console.log(year+'-'+month+'-'+date);
     return (year+'-'+month+'-'+date);
 }

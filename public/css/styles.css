@@ -75,6 +75,7 @@ html, body {
     font-size: calc(25px + 3vw);
     color: var(--light-brown);
     font-family: 'rubik-black';
+    filter: drop-shadow( 2px 2px 3px rgba(0, 0, 0, 0.582));
 }
 
 .in-btn {
@@ -139,6 +140,19 @@ html, body {
     scale: 1;
 }
 
+.groups.all {
+    width: 50%;
+}
+
+.remove-groups {
+    float: left;
+}
+
+.remove-groups:hover {
+    color: var(--light-brown);
+    scale: 1.1;
+}
+
 .upcoming {
     margin: 5px auto;
     padding: 8px;
@@ -150,6 +164,22 @@ html, body {
     text-align: center;
     cursor: pointer;
     border-radius: 3px;
+}
+
+.upcoming>hr {
+    border: none;
+    border-top: 2px solid #2b1f27;
+    margin:0 auto;
+    width: 80%;
+}
+
+.upcoming.overdue {
+    background-color: #cf5c5c;
+    color: var(--light-brown);
+}
+
+.upcoming.overdue>hr {
+    border-top: 2px solid var(--light-brown);
 }
 
 .header {
@@ -216,7 +246,6 @@ html, body {
 .checkbox {
     height: 28px;
     width: 28px;
-    background-color: var(--light-brown);
     text-align: center;
     font-size: 30px;
     color: rgba(73, 73, 73, 0.301);
@@ -225,6 +254,10 @@ html, body {
 
 .checkbox:hover {
     color: var(--dark-bg);
+}
+
+.checked {
+    filter: grayscale(50%) opacity(40%);
 }
 
 .task {
@@ -238,6 +271,10 @@ html, body {
     width: 90%;
     box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.418);
     border-radius: 3px;
+}
+
+.overdue>.due-date{
+    background-color: rgb(207, 92, 92);
 }
 
 .remove-task {
