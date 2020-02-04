@@ -6,25 +6,27 @@ export function renderDOM(tasks, groups) {
     renderGroups(groups);
 }
 
-export function renderOverlay(string) {
+export function renderOverlay(type,groups) {
     // Clear the overlay
     const container = document.querySelector('.overlay-container');
     container.innerHTML = `<div id="overlay-close" class="overlay-close">x</div>`;
 
-    if (string == 'newTask') renderNewTaskOverlay(container);
+    if (type == 'newTask') renderNewTaskOverlay(container,groups);
 }
 
-function renderNewTaskOverlay(container) {
+function renderNewTaskOverlay(container,groups) {
     const html = `  <div class="overlay-title">New Task</div>
                     <hr>
                     <form id="new-task" class="overlay-form" action="">
                         <h1>Task Name:</h1><input id="title" type="text">
                         <h1>Description:</h1><input id="description" type="text">
-                        <h1>Date:</h1><input id="date" type="date">
+                        <h1>Group:</h1><select id="group"></select>
+                        <h1>Date:</h1><input id="date" type="date" value="${setDatePickerDefault()}">
                         <h1>Time:</h1>
                             <div>
                                 <select id="hour">
                                     <option>12</option>
+                                    <option>11</option>
                                     <option>10</option>
                                     <option>9</option>
                                     <option>8</option>
@@ -47,35 +49,19 @@ function renderNewTaskOverlay(container) {
                                     <option>pm</option>
                                 </select>
                             </div>
-                        <h1>Group:</h1><select id="group">
-                            <option>work</option>
-                            <option>play</option>
-                        </select>
-                        <h1>Reminder:</h1>
-                        <div>
-                            <span class="reminder-tag">SMS:</span><input type="checkbox" id="sms">
-                            <span class="reminder-tag">E-mail:</span><input type="checkbox" id="email">
-                        </div>
-                        <h1>When:</h1><select id="reminder" id="reminder-time">
-                            <option>None</option>
-                            <option>15 minutes before</option>
-                            <option>30 minutes before</option>
-                            <option>1 hour before</option>
-                            <option>3 hours before</option>
-                            <option>1 day before</option>
-                            <option>3 days before</option>
-                            <option>1 week before</option>
-                        </select>
-                        <h1>Reccuring</h1><select id="recurring" id="recurring">
-                            <option>None</option>
-                            <option>Every Day</option>
-                            <option>Every Week</option>
-                            <option>Every 2 Weeks</option>
-                            <option>Every Month</option>
-                        </select>
                         <input id="submit" class="submit" type="button" value="submit">
                     </form>`;
     container.innerHTML = container.innerHTML + html;
+    const groupContainer = document.getElementById('group');
+    let groupsOptions = '';
+    groups.forEach(group => {
+        if (group.title == getActiveGroup(groups)){
+            groupsOptions = groupsOptions + '<option selected>'+group.title+'</option>';
+        } else {
+            groupsOptions = groupsOptions + '<option>'+group.title+'</option>';
+        }
+    });
+    groupContainer.innerHTML = groupsOptions;
 }
 
 function renderTasks(tasks, activeGroup) {
@@ -102,18 +88,14 @@ function renderTasks(tasks, activeGroup) {
                             <div class="checkbox">X</div> 
                         </div> 
                         <div class="title">${e.title} 
-                            <span class="tag"></span> 
+                            <span class="remove-task" id="${e.id}">&#128465;</span> 
                             <hr> 
                         </div>                         
                         <div class="description"> 
                             <p>${e.description}</p> 
                         </div> 
                         <div class="due-date"> 
-                            <div class="month">${getMonthFromTime(dateTimeToString(e.dateTime))}</div> 
-                            <div class="date">${getDateFromTime(dateTimeToString(e.dateTime))}</div> 
-                            <div class="time">${getTimeFromTime(dateTimeToString(e.dateTime))}</div>
-                            <hr>
-                            <div class="day">${getDayFromTime(dateTimeToString(e.dateTime))}</div>
+                            ${setDueDate(e.dateTime)}
                         </div>`;
             const newTask = document.createElement('div');
             newTask.className = 'task';
@@ -126,6 +108,23 @@ function renderTasks(tasks, activeGroup) {
         newTask.className = 'empty';
         newTask.textContent = html;
         container.appendChild(newTask);
+    }
+    setDueDate();
+    setUpcoming(tasks);
+}
+
+function setDueDate(dateTime) {
+    if (isNaN(dateTime)) {
+        return 'soon';
+    } else {
+        const html = `
+        <div class="month">${getMonthFromTime(dateTimeToString(dateTime))}</div> 
+        <div class="date">${getDateFromTime(dateTimeToString(dateTime))}</div> 
+        <div class="time">${getTimeFromTime(dateTimeToString(dateTime))}</div>
+        <hr>
+        <div class="day">${getDayFromTime(dateTimeToString(dateTime))}</div>
+        `;
+        return html;
     }
 }
 
@@ -152,6 +151,16 @@ function renderGroups(groups, activeGroup) {
 
 
 /*-- Helper Functions --*/
+function setUpcoming(tasks) {
+    const upcomingTasks = tasks.sort((a, b) => (a.dateTime>b.dateTime)? 1 : -1); // Sort tasks by date
+    document.getElementById('upcoming').innerHTML = upcomingTasks[0].title+'<hr>'+
+        getDayFromTime(dateTimeToString(upcomingTasks[0].dateTime))+' '+
+        '<br>'+
+        getMonthFromTime(dateTimeToString(upcomingTasks[0].dateTime))+' '+
+        getDateFromTime(dateTimeToString(upcomingTasks[0].dateTime))+' '+
+        getTimeFromTime(dateTimeToString(upcomingTasks[0].dateTime));
+}
+
 function getActiveGroup(groups) {
     let active = ''
     groups.forEach((e) => {
@@ -164,4 +173,15 @@ function getActiveGroup(groups) {
 
 function capitalize(string) {
     return string.charAt(0).toUpperCase() + string.slice(1);
+}
+
+function setDatePickerDefault() {
+    const currentDate = new Date();
+    const year = currentDate.getFullYear();
+    let month = (currentDate.getMonth() + 1).toString();
+    let date = currentDate.getDate().toString();
+    if (month[1] == null) month = '0' + month;
+    if (date[1] == null) date = '0' + date;
+    console.log(year+'-'+month+'-'+date);
+    return (year+'-'+month+'-'+date);
 }

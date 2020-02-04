@@ -8,11 +8,11 @@ let groups = [];
 
 
 /* -- Factory Functions --*/
-const Task = function( title, description, dateTime, group, sms, email, reminder, recurring ) {
+const Task = function( title, description, dateTime, group ) {
     const id = taskID;
     const checked = false;
     taskID++;
-    return { title, description, dateTime, group, sms, email, reminder, recurring, checked, id };
+    return { title, description, dateTime, group, checked, id };
 }
 
 const Group = function (title) {
@@ -28,12 +28,15 @@ function buildListeners() {
     Array.from(document.querySelectorAll('.groups')).forEach((e) => {
         e.addEventListener('click', setActiveGroup);
     });
+    Array.from(document.querySelectorAll('.remove-task')).forEach((e) => {
+        e.addEventListener('click', removeTask);
+    });
 }
 
 
 /* -- Task Functions --*/
 function taskBtn() {
-    renderOverlay('newTask');
+    renderOverlay('newTask',groups);
     document.getElementById('submit').addEventListener('click', submitNewTask);
     toggleCurtain();
 }
@@ -47,16 +50,27 @@ function submitNewTask() {
 
 function prepareNewTask() {
     const form = document.getElementById('new-task');
-    const [title, description, date, hour, minute, ampm, group, sms, email, reminder, recurring] 
+    const [title, description, date, hour, minute, ampm, group] 
     = [form[0].value, form[1].value, form[2].value, form[3].value, form[4].value,
-    form[5].value, form[6].value, form[7].value, form[8].value, form[9].value, form[10].value];
+    form[5].value, form[6].value];
     const dateTime = userDateToEpoch(date,hour,minute,ampm); // TODO: set sateTime to the entered value!
-    createNewTask(title, description, dateTime, group, sms, email, reminder, recurring);
+    createNewTask(title, description, dateTime, group);
 }
 
 function createNewTask(title, description, date, hour, minute, ampm, group, sms, email, reminder, recurring) {
     const newTask = new Task (title, description, date, hour, minute, ampm, group, sms, email, reminder, recurring);
     tasks.push(newTask);
+}
+
+function removeTask(e) {
+    tasks.forEach(obj => {
+        if (obj.id == e.target.id){
+            console.log(this);
+            tasks.splice(tasks.indexOf(obj.id),1);
+            console.table(tasks);
+        }
+    });
+    render();
 }
 
 
@@ -86,18 +100,17 @@ function render() {
 
 /* -- Dummy Entries, delet someday --*/
 function dummyEntries() {
-    createNewTask('Make Do-It-Up', 'Lorem Impsum Set Dola', Date.now(), 'work', 'true', 'true', '1 hour before', 'every week');
-    createNewTask('Eat Food', 'Chomp, gobble, slurp', Date.now(), 'work', 'false', 'false', 'false', 'false');
-    createNewTask('Jubilate', 'HEYYYYY-EEEE-YAAAAY-EEE-YEAAAAAA-YEAH', Date.now(), 'play', 'false', 'true', '1 day bofore', 'every month');
-    createNewTask('Birf-deah', 'Time on the right should be 12:30pm Friday March 6 2020', 1583523000000, 'play', 'false', 'true', '1 day bofore', 'every month');
+    createNewTask('Make Do-It-Up', 'Lorem Impsum Set Dola', Date.now(), 'work');
+    createNewTask('Eat Food', 'Chomp, gobble, slurp', Date.now(), 'work');
+    createNewTask('Jubilate', 'HEYYYYY-EEEE-YAAAAY-EEE-YEAAAAAA-YEAH', Date.now(), 'play');
+    createNewTask('Birf-deah', 'Time on the right should be 12:30pm Friday March 6 2020', 1583523000000, 'play');
     const newGroup = new Group('work');
     // newGroup.active = true;
     const newerGroup = new Group('play');
-    newerGroup.active = true;
-    groups.push(newGroup,newerGroup);
+    const newestGroup = new Group('project');
+    groups.push(newGroup,newerGroup,newestGroup);
 }
 
 /* -- Initial Function Call --*/
 dummyEntries();
 render(tasks, groups);
-console.table(tasks);

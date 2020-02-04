@@ -139,8 +139,17 @@ html, body {
     scale: 1;
 }
 
-.upcoming-container {
-    flex: 2;
+.upcoming {
+    margin: 5px auto;
+    padding: 8px;
+    width: 80%;
+    font-family: 'rubik-bold';
+    font-size: calc(12px + 0.5vw);
+    color: #2b1f27;
+    background-color: var(--light-brown);
+    text-align: center;
+    cursor: pointer;
+    border-radius: 3px;
 }
 
 .header {
@@ -177,6 +186,7 @@ html, body {
     flex: 4;
     width: 65vw;
     background-color: var(--light-bg);
+    overflow: auto;
 }
 
 .add-task {
@@ -228,6 +238,22 @@ html, body {
     width: 90%;
     box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.418);
     border-radius: 3px;
+}
+
+.remove-task {
+    float: right;
+    background-color: var(--middle-bg);
+    color: var(--light-brown);
+    margin-right: 10px;
+    border-radius: 3px;
+    padding: 0 2px 0 2px;
+    transform: translateY(-2px);
+    cursor: pointer;
+}
+
+.remove-task:hover {
+    scale: 1.1;
+    background-color: var(--light-bg);
 }
 
 .empty {
@@ -301,8 +327,8 @@ html, body {
 
 .overlay-container {
     margin: 0 auto;
-    width: 50%;
-    height: 100%;
+    width: 60vw;
+    max-height: 100%;
     background-color: var(--light-brown);
     box-shadow: 4px 4px 8px rgba(31, 31, 31, 0.712);
     overflow: auto;
@@ -349,7 +375,7 @@ html, body {
 
 .overlay-form {
     display: grid;
-    grid-template-columns: 30% 1fr;
+    grid-template-columns: 35% 1fr;
     column-gap: 15px;
     row-gap: 25px;
     margin: 15px 15px 30px 0;
@@ -383,8 +409,24 @@ html, body {
     background-color: rgb(250, 250, 244);
 }
 
-.reminder-tag {
+.overlay-checkbox {
     font-size: 25px;
     font-family: 'rubik-bold';
     color: var(--middle-bg);
 }
+
+.overlay-form .submit {
+    margin: 0 auto;
+    grid-column: 1 /span 2;
+    width: 50%;
+    font-family: 'rubik-bold';
+    background-color: var(--middle-bg);
+    color: var(--light-brown);
+}
+
+.overlay-form .submit:hover {
+    scale: 1.02;
+    background-color: var(--light-bg);
+    color: var(--light-brown);
+}
+
